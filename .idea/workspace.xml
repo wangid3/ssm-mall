@@ -264,7 +264,7 @@
               <path>
                 <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
                 <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-                <item name="Running" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+                <item name="Finished" type="7427dc5b:ServiceModel$ServiceGroupNode" />
               </path>
             </expand>
             <select />
@@ -286,7 +286,7 @@
       <workItem from="1625490016657" duration="5037000" />
       <workItem from="1625503751669" duration="7346000" />
       <workItem from="1625528485732" duration="70690000" />
-      <workItem from="1625648932044" duration="15291000" />
+      <workItem from="1625648932044" duration="15653000" />
     </task>
     <servers />
   </component>
