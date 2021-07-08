@@ -38,7 +38,6 @@ public class GuavaCache {
     public static void setTokenToCache(String key,String value){
 
         tokenCache.put(key,value);
-
     }
 
     public static String getTokenFromCache(String key){
@@ -50,9 +49,8 @@ public class GuavaCache {
             value = tokenCache.get(key);
 
         } catch (ExecutionException e) {
-
+            System.out.println(e.getCause());
             e.printStackTrace();
-
         }
 
         return value;

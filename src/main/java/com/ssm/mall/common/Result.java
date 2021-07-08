@@ -71,7 +71,8 @@ public enum Result {
     HAVE_NO_ORDERS(712,"没有该订单"),
     ORDER_CANCEL_FAILED_ALEADY_PAY(713,"取消订单失败，不是未支付状态"),
     ORDER_NOT_PAY(714,"订单尚未付款"),
-
+    ORDER_NOT_US(715,"订单异常，收款失败"),
+    ORDER_ALREADY_PAY(716,"订单以被支付"),
 
 
 

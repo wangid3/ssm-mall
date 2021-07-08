@@ -23,6 +23,12 @@
     id, order_no, user_id, shipping_id, payment, payment_type, postage, status, payment_time, 
     send_time, end_time, close_time, create_time, update_time
   </sql>
+
+  <sql id="Search_Column_List">
+    o.id,order_no,user_id,shipping_id,payment,patment_type,postage,status,payment_time,
+    send_time,end_time,close_time,o.create_time,o.update_time
+  </sql>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
@@ -35,6 +41,41 @@
       from t_order
       where user_id=#{userId} and order_no =#{orderNo}
     </select>
+
+    <select id="selectByUserid" resultType="com.ssm.mall.dao.pojo.Order">
+      select <include refid="Base_Column_List"></include>
+      from current_user
+      where user_id=#{userId}
+      order by create_time desc
+    </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from t_order
+    order by create_time desc
+  </select>
+
+  <select id="selectByOrderno" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from t_order
+    where order_no =#{orderNo}
+  </select>
+
+  <select id="msearch" parameterType="com.ssm.mall.dao.vo.SearchVO" resultMap="BaseResultMap">
+    select <include refid="Search_Column_List"/> from t_order o left join t_user u on o.user_id=u.id
+    <where>
+      <if test="orderNo!=null">
+        and o.order_no=#{orderNo}
+      </if>
+      <if test="username!=null">
+        and username like concat('%',#{username},'%')
+      </if>
+      <if test="true">
+        and o.payment between #{minPayment} and #{maxPayment}
+      </if>
+    </where>
+    order by o.create_time desc
+  </select>
 
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
@@ -205,5 +246,11 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateOrderStatusPaid" parameterType="map">
+    update t_order
+    set status = #{status} , payment_time = now()
+    where order_no = #{orderNo}
   </update>
 </mapper>

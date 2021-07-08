@@ -247,4 +247,10 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <update id="updateOrderStatusPaid" parameterType="map">
+    update t_order
+    set status = #{status} , payment_time = now()
+    where order_no = #{orderNo}
+  </update>
 </mapper>

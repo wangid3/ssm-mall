@@ -33,7 +33,14 @@
     where user_id=#{userId} and order_no=#{orderNo}
   </select>
 
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <select id="selectAllByOrderNo" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from t_item
+    where order_no=#{orderNo}
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from t_item
     where id = #{id,jdbcType=INTEGER}
   </delete>
@@ -120,7 +127,19 @@
       </if>
     </trim>
   </insert>
-    <insert id="batchInsertItems"></insert>
+    <insert id="batchInsertItems" parameterType="list">
+      insert into t_item(id,user_id,order_no,
+      product_id,product_name,product_image,
+      current_unit_price,quantity,total_price,
+      creat_time,update_time)
+      values
+      <foreach collection="itemList" item="item" index="index" separator=",">
+        (#{item.id},#{item.userId},#{item.orderNo},#{item.productId},#{item.productName},
+        #{item.productImage},#{item.currentUnitPrice},#{item.totalPrice},now(),now()
+        )
+      </foreach>
+    </insert>
+
     <update id="updateByPrimaryKeySelective" parameterType="com.ssm.mall.dao.pojo.Item" >
     update t_item
     <set >

@@ -1,5 +1,6 @@
 package com.ssm.mall.service.impl;
 
+import com.alipay.api.AlipayResponse;
 import com.alipay.api.response.AlipayTradePrecreateResponse;
 import com.alipay.demo.trade.config.Configs;
 import com.alipay.demo.trade.model.ExtendParams;
@@ -25,6 +26,7 @@ import com.ssm.mall.service.iservice.OrderService;
 import com.ssm.mall.util.BigDecimalUtil;
 import com.ssm.mall.util.FTPUtil;
 import com.ssm.mall.util.PropertyUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
         String storeId = "test_substore_id";
         // 业务扩展参数，目前可添加由支付宝分配的系统商编号(通过setSysServiceProviderId方法)，详情请咨询支付宝技术支持
         ExtendParams extendParams = new ExtendParams();
-        extendParams.setSysServiceProviderId("2088100200300400500");
+        extendParams.setSysServiceProviderId("2088621956118858");
         // 支付超时，定义为120分钟
         String timeoutExpress = "120m";
         // 商品明细列表，需填写购买商品详细信息，
@@ -130,12 +132,13 @@ public class OrderServiceImpl implements OrderService {
             case SUCCESS://根据业务逻辑需要，应该将生成的二维码上传ftp文件服务器，并返回订单编号及支付码地址
                 log.info("支付宝预下单成功: )");
                 AlipayTradePrecreateResponse response = result.getResponse();
-                System.out.println(response);//打印response，观察结果
+                dumpResponse(response);//打印response，观察结果
                 File webServerPath = new File(path);//在web服务器端，创建指定的二维码存放目录
                 if(!webServerPath.exists()){
                     webServerPath.setWritable(true);
                     webServerPath.mkdir();
                 }
+
                 //组装支付二维码的图片存储地址和文件名,注意/的添加
                 String qrPath = String.format(path+"/qr-%s.png",response.getOutTradeNo());
                 String qrFileName = String.format("qr-%s.png",response.getOutTradeNo());
@@ -155,6 +158,17 @@ public class OrderServiceImpl implements OrderService {
             default:
                 log.error("不支持的交易状态，交易返回异常!!!");
                 return ServerRes.error(Result.ALIPAY_TRADE_NOT_SUPPLY);
+        }
+    }
+
+    // 简单打印应答
+    private void dumpResponse(AlipayResponse response) {
+        if (response != null) {
+            log.info(String.format("code:%s, msg:%s", response.getCode(), response.getMsg()));
+            if (StringUtils.isNotEmpty(response.getSubCode())) {
+                log.info(String.format("subCode:%s, subMsg:%s", response.getSubCode(), response.getSubMsg()));
+            }
+            log.info("body:" + response.getBody());
         }
     }
 
@@ -368,15 +382,39 @@ public class OrderServiceImpl implements OrderService {
         if(order==null){
             return ServerRes.error(Result.RESULT_ERROR);
         }
-        if(order.getStatus()!=Const.OrderStatus.ORDER_ALREADY_PAY.getCode()){
+        /*        if(order.getStatus()!=Const.OrderStatus.ORDER_ALREADY_PAY.getCode()){
             return ServerRes.error(Result.ORDER_NOT_PAY);
-        }
+        }*/
         Order newOrder =new Order();
         newOrder.setId(order.getId());
         newOrder.setStatus(order.getStatus());
         newOrder.setStatus(Const.OrderStatus.ORDER_ALREADY_SEND.getCode());
         orderMapper.updateByPrimaryKeySelective(newOrder);
         return ServerRes.success(Result.RESULT_SUCCESS);
+    }
+
+    @Override
+    public ServerRes updateOrderStatusPay(Long orderNo) {
+        Order order =orderMapper.selectByOrderno(orderNo);
+        System.out.println(order);
+        if(order==null){
+            System.out.println(ServerRes.error(Result.RESULT_ERROR));
+            return ServerRes.error(Result.RESULT_ERROR);
+
+        }
+        if(order.getStatus()!=Const.OrderStatus.ORDER_NO_PAY.getCode()){
+            System.out.println(ServerRes.error(Result.ORDER_ALREADY_PAY));
+            return ServerRes.error(Result.ORDER_ALREADY_PAY);
+        }
+        int status=Const.OrderStatus.ORDER_ALREADY_PAY.getCode();
+        orderMapper.updateOrderStatusPaid(orderNo,status);
+        return ServerRes.success(Result.RESULT_SUCCESS);
+
+    }
+
+    @Override
+    public Order getOrderByOrderNo(Long Orderno) {
+        return orderMapper.selectByOrderno(Orderno);
     }
 
     private OrderVO assembleOrderVO(Order order,List<Item> itemList){

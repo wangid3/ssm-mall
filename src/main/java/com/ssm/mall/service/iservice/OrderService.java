@@ -1,6 +1,8 @@
 package com.ssm.mall.service.iservice;
 
 import com.ssm.mall.common.ServerRes;
+import com.ssm.mall.dao.pojo.Order;
+import com.ssm.mall.dao.pojo.PayInfo;
 import com.ssm.mall.dao.vo.SearchVO;
 
 public interface OrderService {
@@ -24,4 +26,8 @@ public interface OrderService {
     ServerRes msearch(SearchVO sv, int pageNum, int pageSize);
 
     ServerRes updateOrderStatusSend(Long orderNo);
+
+    ServerRes updateOrderStatusPay(Long orderNo);
+
+    Order getOrderByOrderNo(Long valueOf);
 }

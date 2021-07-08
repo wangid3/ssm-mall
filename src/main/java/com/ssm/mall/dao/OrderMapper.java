@@ -30,4 +30,6 @@ public interface OrderMapper {
     Order selectByOrderno(Long orderNo);
 
     List<Order> msearch(SearchVO sv);
+
+    int updateOrderStatusPaid(@Param("orderNo") Long orderNo,@Param("status") int status);
 }

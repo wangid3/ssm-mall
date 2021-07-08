@@ -56,20 +56,5 @@ public class CategoryAdminController {
         return categoryService.getParallelCategories(parentId);
     }
 
-    @RequestMapping(value = "deepCategory.do", method = RequestMethod.POST)
-    public @ResponseBody
-    ServerRes deepCategory(Integer categoryId, HttpSession session) {
-        //验证是否已经登录
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return ServerRes.error(Result.NEED_LOGIN);
-        }
-        //检验用户权限
-        if (user.getRole() != Const.Role.ADMIN) {
-            return ServerRes.error(Result.ADMIN_LOGIN_ERROR);
-        }
-        return categoryService.getDeepCategory(categoryId);
 
-
-    }
 }

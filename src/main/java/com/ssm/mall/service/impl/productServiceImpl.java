@@ -66,7 +66,7 @@ public class productServiceImpl implements ProductService {
     @Override
     public ServerRes setProductStatus(Integer id, Integer status) {
         Product product=new Product();
-        product.setCategoryId(id);
+        product.setProductId(id);
         product.setStatus(status);
         int rows=productMapper.updateByPrimaryKeySelective(product);
         return rows>0?

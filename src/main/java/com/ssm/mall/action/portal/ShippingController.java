@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.ssm.mall.common.Const;
 import com.ssm.mall.common.Result;
 import com.ssm.mall.common.ServerRes;
-import com.ssm.mall.dao.ShippingMapper;
 import com.ssm.mall.dao.pojo.Shipping;
 import com.ssm.mall.dao.pojo.User;
 import com.ssm.mall.service.iservice.ShippingService;

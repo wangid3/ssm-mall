@@ -40,8 +40,10 @@
     select IFNULL(sum(quantity),0) product_count from t_cart where user_id=#{userId}
   </select>
 
-    <select id="selectCheckedCarts" resultType="com.ssm.mall.dao.pojo.Cart">
-
+    <select id="selectCheckedCarts" parameterType="map" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from t_cart
+        where user_id =#{userId} and checked=1
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
